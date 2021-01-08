@@ -1,11 +1,20 @@
 package com.mwave.store;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @RequestMapping(value = "/")
@@ -16,6 +25,36 @@ public class ProdutoController {
     public ProdutoController(ProdutoRepository produtoRepository) {
         this.produtoRepository = produtoRepository;
     }
+
+    @PostMapping(
+            path = "image/{imageId}",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public void uploadFile(@PathVariable("imageId") Long id,
+                           @RequestParam("image")MultipartFile file) throws IOException {
+
+        UUID uuid = UUID.randomUUID();
+
+        System.out.println("Image ID = " + id);
+
+        // String filePath = "/Users/rrgayer/" + file.getOriginalFilename();
+        String filePath = "/Users/rrgayer/" + uuid.toString() + ".jpg";
+        file.transferTo(new File(filePath));
+
+    }
+
+    @GetMapping(
+        path = "/image/download/{id}",
+        produces = MediaType.IMAGE_PNG_VALUE
+    )
+    public byte[] downloadFile(@PathVariable("id") Long id) throws IOException {
+        System.out.println("Realizando download..." + id);
+        String filePath = "/Users/rrgayer/" + id + ".png";
+        byte[] bytes = Files.readAllBytes(Paths.get(filePath));
+        return bytes;
+    }
+
 
     @GetMapping("/produtos")
     public ResponseEntity<List<Produto>> getProdutos() {
