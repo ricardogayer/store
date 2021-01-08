@@ -5,10 +5,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -26,13 +23,14 @@ public class ProdutoController {
         this.produtoRepository = produtoRepository;
     }
 
+    // UPLOAD
     @PostMapping(
             path = "image/{imageId}",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public void uploadFile(@PathVariable("imageId") Long id,
-                           @RequestParam("image")MultipartFile file) throws IOException {
+                           @RequestParam("image") MultipartFile file) throws IOException {
 
         UUID uuid = UUID.randomUUID();
 
@@ -44,6 +42,7 @@ public class ProdutoController {
 
     }
 
+    // DOWNLOAD
     @GetMapping(
         path = "/image/download/{id}",
         produces = MediaType.IMAGE_PNG_VALUE
@@ -56,12 +55,15 @@ public class ProdutoController {
     }
 
 
+   // LIST
     @GetMapping("/produtos")
     public ResponseEntity<List<Produto>> getProdutos() {
         List<Produto> produtos = produtoRepository.findByOrderByNomeAsc();
         return ResponseEntity.ok(produtos);
     }
 
+
+   // LIST filtro
     @GetMapping("/produtos/{id}")
     public ResponseEntity<Produto> getProduto(@PathVariable("id") Long id) {
 
@@ -77,6 +79,7 @@ public class ProdutoController {
         return ResponseEntity.ok(produto);
     }
 
+    // SAVE
     @PostMapping("/produtos")
     public ResponseEntity<Produto> saveProduto(@RequestBody Produto produto) {
         System.out.println("Incluindo o produto: " + produto.getNome());
@@ -84,6 +87,7 @@ public class ProdutoController {
         return new ResponseEntity<>(p, HttpStatus.CREATED);
     }
 
+    // UPDATE
     @PutMapping("/produtos")
     public ResponseEntity<Produto> updateProduto(@RequestBody Produto produto) {
 
@@ -107,6 +111,7 @@ public class ProdutoController {
         return ResponseEntity.ok(p);
     }
 
+    // DELETE
     @DeleteMapping("/produtos/{id}")
     public ResponseEntity deleteProdutoById(@PathVariable("id") Long id) {
         Optional<Produto> opt = produtoRepository.findById(id);
