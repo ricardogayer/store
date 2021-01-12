@@ -91,6 +91,10 @@ public class ProdutoController {
     @PutMapping("/produtos")
     public ResponseEntity<Produto> updateProduto(@RequestBody Produto produto) {
 
+        System.out.println("Chamada da atualização do produto");
+        System.out.println("Produto Id: " + produto.getId());
+        System.out.println("Produto Nome: " + produto.getNome());
+
         Produto p = new Produto();
         Optional<Produto> opt = produtoRepository.findById(produto.getId());
 
