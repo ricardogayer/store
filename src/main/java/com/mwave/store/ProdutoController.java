@@ -17,6 +17,8 @@ import java.util.UUID;
 @RequestMapping(value = "/")
 public class ProdutoController {
 
+    private int contador = 0;
+
     ProdutoRepository produtoRepository;
 
     public ProdutoController(ProdutoRepository produtoRepository) {
@@ -59,6 +61,12 @@ public class ProdutoController {
     @GetMapping("/produtos")
     public ResponseEntity<List<Produto>> getProdutos() {
         List<Produto> produtos = produtoRepository.findByOrderByNomeAsc();
+        // Simulando um erro p/ uso do Retry no iOS - Alamofire
+        if (contador <= 5) {
+            System.out.println("Contador: " + contador);
+            contador++;
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
         return ResponseEntity.ok(produtos);
     }
 
